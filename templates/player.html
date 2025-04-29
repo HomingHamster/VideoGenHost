@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Video Player</title>
+    <style>
+        body { font-family: sans-serif; background: #111; color: white; text-align: center; }
+        video { width: 80%; margin-top: 2rem; }
+        #info { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <h1>Streaming Video Player</h1>
+    <video id="video" controls>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div id="info">
+        <span id="loaded">Buffered: 0%</span>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const loadedDisplay = document.getElementById('loaded');
+
+        function updateBuffered() {
+            if (video.buffered.length > 0) {
+                const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+                const percent = (bufferedEnd / video.duration * 100).toFixed(2);
+                loadedDisplay.textContent = `Buffered: ${percent}%`;
+            }
+        }
+
+        video.addEventListener('progress', updateBuffered);
+        video.addEventListener('timeupdate', updateBuffered);
+    </script>
+</body>
+</html>
