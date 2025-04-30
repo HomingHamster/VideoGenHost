@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": {{ seed }},
+      "seed": 0,
       "steps": 30,
       "cfg": 6,
       "sampler_name": "uni_pc",
@@ -31,7 +31,7 @@
   },
   "6": {
     "inputs": {
-      "text": "{{ prompt }}",
+      "text": "",
       "clip": [
         "38",
         0
