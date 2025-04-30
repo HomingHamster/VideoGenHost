@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="71e28504-6894-45f7-9862-b1f3469a6b55" name="Changes" comment="apparently working">
+    <list default="true" id="71e28504-6894-45f7-9862-b1f3469a6b55" name="Changes" comment="apparently working (fixed somehow)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/player.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/player.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,13 +113,22 @@
       <option name="project" value="LOCAL" />
       <updated>1746041465182</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="apparently working (fixed somehow)">
+      <option name="closed" value="true" />
+      <created>1746053934112</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1746053934112</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
     <MESSAGE value="apparently working" />
-    <option name="LAST_COMMIT_MESSAGE" value="apparently working" />
+    <MESSAGE value="apparently working (fixed somehow)" />
+    <option name="LAST_COMMIT_MESSAGE" value="apparently working (fixed somehow)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

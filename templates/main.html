@@ -9,23 +9,19 @@
 
     <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd;">
         <h2>Generate New Video</h2>
-        <form action="/" method="post" enctype="multipart/form-data">
+        <form id="gen-form" action="/start" method="post" enctype="multipart/form-data">
             <input type="hidden" name="_xsrf" value="{{ xsrf_token }}">
-
             <div style="margin: 10px 0;">
                 <label for="prompt">Video Prompt:</label><br>
                 <textarea id="prompt" name="prompt" rows="4"
                     style="width: 100%; padding: 8px;"
                     placeholder="Describe your video..."></textarea>
             </div>
-
             <input type="submit" value="Generate Video"
                 style="background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer;">
         </form>
-
-        {% if status %}
-            <p style="color: green; margin-top: 15px;">{{ status }}</p>
-        {% end %}
+        <!-- Status indicators for each task will be appended here -->
+        <div id="status-list" style="margin-top: 15px;"></div>
     </div>
 
     <div style="margin-top: 30px;">
@@ -34,5 +30,58 @@
     </div>
 
     <p style="margin-top: 30px;"><a href="/logout">Logout</a></p>
+
+    <script>
+        // Handle form submission via AJAX to get task_id
+        document.getElementById('gen-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await response.json();
+            if (data.task_id) {
+                addStatusIndicator(data.task_id);
+            } else {
+                alert('Failed to start generation.');
+            }
+        });
+
+        // Add a status indicator and start polling for a specific task_id
+        function addStatusIndicator(taskId) {
+            const statusList = document.getElementById('status-list');
+            const div = document.createElement('div');
+            div.id = 'status-' + taskId;
+            div.textContent = `Task ${taskId}: pending`;
+            statusList.appendChild(div);
+            pollStatus(taskId, div);
+        }
+
+        // Poll the status endpoint for a specific task_id
+        async function pollStatus(taskId, div) {
+            try {
+                const res = await fetch('/status/' + taskId, { credentials: 'same-origin' });
+                const data = await res.json();
+                if (data.status === "pending") {
+                    div.textContent = `Task ${taskId}: pending`;
+                    setTimeout(() => pollStatus(taskId, div), 2000);
+                } else if (data.status === "complete") {
+                    div.innerHTML = `Task ${taskId}: complete | <a href="/player/${data.filename}">View Video</a>`;
+                } else if (data.status === "error") {
+                    div.textContent = `Task ${taskId}: error`;
+                } else {
+                    div.textContent = `Task ${taskId}: unknown status`;
+                }
+            } catch (e) {
+                div.textContent = `Task ${taskId}: error polling status`;
+            }
+        }
+    </script>
 </body>
 </html>
