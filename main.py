@@ -5,7 +5,6 @@ import typing
 import uuid
 from comfy.api import schemas, exceptions
 from comfy.api.components.schema.prompt import Prompt
-import aiohttp
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
@@ -24,7 +23,7 @@ USERS = {
 PROMPT = {
   "3": {
     "inputs": {
-      "seed": 0,
+      "seed": 239759970931583,
       "steps": 30,
       "cfg": 6,
       "sampler_name": "uni_pc",
@@ -54,7 +53,7 @@ PROMPT = {
   },
   "6": {
     "inputs": {
-      "text": "",
+      "text": "A video file to be played on a billboard. Attention grabbing. \"In 2023 David Sinclair reversed the age of a monkey...\" Fades to \"Isn't it time we thought about how this is going to work\" Fades to \"https:",
       "clip": [
         "38",
         0
@@ -95,6 +94,7 @@ PROMPT = {
     }
   },
   "28": {
+    "output_dir": "/home/ubuntu/PycharmProjects/VideoGenHost/videos",
     "inputs": {
       "filename_prefix": "ComfyUI",
       "fps": 16,
@@ -143,14 +143,30 @@ PROMPT = {
   },
   "40": {
     "inputs": {
-      "width": 832,
-      "height": 480,
-      "length": 33,
+      "width": 624,
+      "height": 320,
+      "length": 53,
       "batch_size": 1
     },
     "class_type": "EmptyHunyuanLatentVideo",
     "_meta": {
       "title": "EmptyHunyuanLatentVideo"
+    }
+  },
+  "47": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "codec": "vp9",
+      "fps": 24,
+      "crf": 32,
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveWEBM",
+    "_meta": {
+      "title": "SaveWEBM"
     }
   },
   "48": {
@@ -167,6 +183,8 @@ PROMPT = {
     }
   }
 }
+
+
 
 class JSONEncoder(json.JSONEncoder):
     compact_separators = (',', ':')
@@ -188,6 +206,7 @@ class JSONEncoder(json.JSONEncoder):
         elif isinstance(obj, (list, tuple)):
             return [self.default(item) for item in obj]
         raise exceptions.ApiValueError('Unable to prepare type {} for serialization'.format(obj.__class__.__name__))
+
 
 # Base handler with common helpers
 class BaseHandler(tornado.web.RequestHandler):
@@ -261,27 +280,45 @@ class ComfyUIClient:
         workflow = copy.deepcopy(PROMPT)
         workflow["6"]["inputs"]["text"] = prompt
         self.prompt = JSONEncoder().encode(Prompt.validate(workflow))
-        self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10 * 60.0, connect=60.0))
 
     async def run_workflow_and_save_video(self, save_dir="videos"):
         os.makedirs(save_dir, exist_ok=True)
         headers = {'Content-Type': 'application/json'}
-        async with self.session.post(self.server_address + "/api/v1/prompts", data=self.prompt,
-                                     headers=headers) as response:
+        http_client = tornado.httpclient.AsyncHTTPClient()
 
-            if 200 <= response.status < 400:
-                path = os.path.join(save_dir, str(uuid.uuid4()) + ".webp")
-                response = await response.read()
-                image = await tornado.httpclient.AsyncHTTPClient().fetch(json.loads(response)["urls"][0])
-                image = image.body
-                with open(path, "wb") as f:
-                    f.write(image)
-                print(f"Saved video: {path}")
-            else:
-                raise RuntimeError(f"could not prompt: {response.status}: {await response.text()}")
+        # Send prompt to ComfyUI
+        try:
+            response = await http_client.fetch(
+                self.server_address + "/api/v1/prompts",
+                method="POST",
+                headers=headers,
+                body=self.prompt,
+                request_timeout=600
+            )
+        except tornado.httpclient.HTTPClientError as e:
+            raise RuntimeError(f"Prompt request failed: {e.code}: {e.message}")
+
+        # Parse response
+        try:
+            data = json.loads(response.body.decode())
+            video_url = data["urls"][0]
+        except (KeyError, json.JSONDecodeError):
+            raise RuntimeError("Invalid response structure from ComfyUI")
+
+        # Fetch video data
+        try:
+            video_response = await http_client.fetch(video_url)
+        except tornado.httpclient.HTTPClientError as e:
+            raise RuntimeError(f"Video fetch failed: {e.code}: {e.message}")
+
+        path = os.path.join(save_dir, str(uuid.uuid4()) + ".webp")
+        with open(path, "wb") as f:
+            f.write(video_response.body)
+        print(f"Saved video: {path}")
 
 
 VIDEO_DIR = "videos"
+
 
 class VideoStreamHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -323,7 +360,7 @@ class VideoStreamHandler(tornado.web.RequestHandler):
 
 class PlayerHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("player.html", video_url="/video/sample.mp4")
+        self.render("player.html", video_url="/video/482a2edb-4cfe-484a-9f43-fde1f1509a2b.webp")
 
 
 def make_app():

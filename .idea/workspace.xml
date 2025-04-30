@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="71e28504-6894-45f7-9862-b1f3469a6b55" name="Changes" comment="test">
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/VideoGenHost.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/VideoGenHost.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="71e28504-6894-45f7-9862-b1f3469a6b55" name="Changes" comment="apparently working">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/short_video.json.tpl" beforeDir="false" afterPath="$PROJECT_DIR$/templates/short_video.json.tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/test.json" beforeDir="false" afterPath="$PROJECT_DIR$/templates/test.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,12 +103,21 @@
       <option name="project" value="LOCAL" />
       <updated>1745944477059</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="apparently working">
+      <option name="closed" value="true" />
+      <created>1746041465182</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746041465182</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
-    <option name="LAST_COMMIT_MESSAGE" value="test" />
+    <MESSAGE value="apparently working" />
+    <option name="LAST_COMMIT_MESSAGE" value="apparently working" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
