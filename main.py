@@ -1,6 +1,7 @@
 import json
 import os
 import mimetypes
+import random
 import typing
 import uuid
 import copy
@@ -25,7 +26,7 @@ TASKS = defaultdict(lambda: {"status": "pending", "filename": None})
 PROMPT = {
   "3": {
     "inputs": {
-      "seed": 239759970931583,
+      "seed": random.randint(0, 2**32 - 1),
       "steps": 30,
       "cfg": 6,
       "sampler_name": "uni_pc",
