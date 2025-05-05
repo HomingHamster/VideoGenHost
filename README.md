@@ -5,7 +5,8 @@ This repo will allow you to generate short clips using a ComfyUI
 instance running locally. It allows you to provide only the prompt,
 and get a video file downloaded to the folder this app is running in.
 It will also poll for completion, host the video files and provide
-a player with buffering.
+a player with buffering. The code will explain how to use the ComfyUI
+API.
 
 TODO
 ----
