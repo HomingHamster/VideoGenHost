@@ -354,11 +354,10 @@ def make_app():
         login_url="/login",
         template_path="templates",
         static_path=os.path.join(os.path.dirname(__file__), "static"),
-        debug=True
+        debug=False
     )
 
 if __name__ == "__main__":
-    AsyncIOMainLoop().install()
     app = make_app()
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
