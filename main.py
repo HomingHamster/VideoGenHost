@@ -22,7 +22,7 @@ USERS = {
 VIDEO_DIR = "videos"
 
 
-#define a test that check the dict is saved correctly
+#define a test that check the dict is saved correctly (probably unnecessary)
 TASKS = defaultdict(lambda: {"status": "pending", "filename": None})
 
 
@@ -236,7 +236,7 @@ class MainHandler(BaseHandler):
             return "<p>Video directory not found</p>"
 
 
-#define the login page handler
+#define the login page handler/view
 class LoginHandler(BaseHandler):
     def get(self):
         self.write("""
@@ -257,7 +257,7 @@ class LoginHandler(BaseHandler):
             self.write("Login failed. <a href='/login'>Try again</a>")
 
 
-#define a logout page handler that removes the cookie
+#define a logout page handler/view that removes the cookie
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
