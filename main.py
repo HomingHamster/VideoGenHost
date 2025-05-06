@@ -6,13 +6,10 @@ import typing
 import uuid
 import copy
 from collections import defaultdict
-
 import tornado.ioloop
 import tornado.web
 import tornado.escape
 import tornado.httpclient
-
-from tornado.platform.asyncio import AsyncIOMainLoop
 from comfy.api import schemas, exceptions
 from comfy.api.components.schema.prompt import Prompt
 
@@ -187,6 +184,7 @@ PROMPT = {
   }
 }
 
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, obj: typing.Any):
         if isinstance(obj, str): return str(obj)
@@ -200,9 +198,11 @@ class JSONEncoder(json.JSONEncoder):
             return [self.default(item) for item in obj]
         raise exceptions.ApiValueError('Unable to prepare type {} for serialization'.format(obj.__class__.__name__))
 
+
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
+
 
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
@@ -223,6 +223,7 @@ class MainHandler(BaseHandler):
         except FileNotFoundError:
             return "<p>Video directory not found</p>"
 
+
 class LoginHandler(BaseHandler):
     def get(self):
         self.write("""
@@ -242,10 +243,12 @@ class LoginHandler(BaseHandler):
         else:
             self.write("Login failed. <a href='/login'>Try again</a>")
 
+
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
         self.redirect("/login")
+
 
 class StartGenerationHandler(BaseHandler):
     @tornado.web.authenticated
@@ -259,6 +262,7 @@ class StartGenerationHandler(BaseHandler):
 
         self.write({"task_id": task_id})
 
+
 class StatusHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, task_id):
@@ -267,6 +271,7 @@ class StatusHandler(BaseHandler):
             self.set_status(404)
             return self.write({"status": "not_found"})
         self.write(task)
+
 
 class VideoStreamHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -300,9 +305,11 @@ class VideoStreamHandler(tornado.web.RequestHandler):
                     self.write(chunk)
         self.finish()
 
+
 class PlayerHandler(tornado.web.RequestHandler):
     def get(self, filename):
         self.render("player.html", video_url=f"/video/{filename}")
+
 
 class ComfyUIClient:
     def __init__(self, server_address, prompt):
