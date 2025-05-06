@@ -12,6 +12,8 @@ TODO
 ----
 * Progress reporting beyond pending/completed.
 * HTTPS server
+* user password hashing
+* api tokens
 
 Install
 -------
