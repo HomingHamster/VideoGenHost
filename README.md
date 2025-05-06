@@ -18,7 +18,7 @@ Install
 1. Follow the ComfyUI install process separately to this app,
 and have a running ComfyUI instance.
 2. Follow the process to download the Wan 1.3B model (create a new workflow
-for creating videos in ComfyUI)
+for creating videos in ComfyUI).
 3. Download this repo and cd into it.
 4. Create a venv for this project.
 

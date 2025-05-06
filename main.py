@@ -13,13 +13,21 @@ import tornado.httpclient
 from comfy.api import schemas, exceptions
 from comfy.api.components.schema.prompt import Prompt
 
+#mock user db
 USERS = {
     "admin": "password123"
 }
 
+
 VIDEO_DIR = "videos"
+
+
+#define a test that check the dict is saved correctly
 TASKS = defaultdict(lambda: {"status": "pending", "filename": None})
 
+
+#the comfyui workflow as a python dict (exported from comfyui using the
+#API workflow export feature, which is enabled in settings)
 PROMPT = {
   "3": {
     "inputs": {
@@ -185,6 +193,7 @@ PROMPT = {
 }
 
 
+#sublass the JSONEncoder class from the default json library to cope with the comfyui schema
 class JSONEncoder(json.JSONEncoder):
     def default(self, obj: typing.Any):
         if isinstance(obj, str): return str(obj)
@@ -199,11 +208,14 @@ class JSONEncoder(json.JSONEncoder):
         raise exceptions.ApiValueError('Unable to prepare type {} for serialization'.format(obj.__class__.__name__))
 
 
+#define a base view for tornado that appends the current user to the class so we can use the username from the cookie
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
 
 
+#define the homepage view that renders the main template while the user is logged in and forwards to the default
+#login page if not
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -224,6 +236,7 @@ class MainHandler(BaseHandler):
             return "<p>Video directory not found</p>"
 
 
+#define the login page handler
 class LoginHandler(BaseHandler):
     def get(self):
         self.write("""
@@ -244,12 +257,14 @@ class LoginHandler(BaseHandler):
             self.write("Login failed. <a href='/login'>Try again</a>")
 
 
+#define a logout page handler that removes the cookie
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
         self.redirect("/login")
 
 
+#define a view that catalogs the task and also sends it to comfy ui
 class StartGenerationHandler(BaseHandler):
     @tornado.web.authenticated
     async def post(self):
@@ -263,6 +278,7 @@ class StartGenerationHandler(BaseHandler):
         self.write({"task_id": task_id})
 
 
+#define a view that is polled to keep track of when the task is complete
 class StatusHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, task_id):
@@ -273,6 +289,7 @@ class StatusHandler(BaseHandler):
         self.write(task)
 
 
+#define a view that sends the video file itself in a way that can be buffered by the player
 class VideoStreamHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Accept-Ranges", "bytes")
@@ -306,11 +323,14 @@ class VideoStreamHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+#a view that renders the js player
 class PlayerHandler(tornado.web.RequestHandler):
     def get(self, filename):
         self.render("player.html", video_url=f"/video/{filename}")
 
 
+#a class (not a tornado view) that implients the tasks used by the status and start views
+#this class controlls comfy ui via the api
 class ComfyUIClient:
     def __init__(self, server_address, prompt):
         self.server_address = server_address
@@ -347,6 +367,9 @@ class ComfyUIClient:
             TASKS[task_id] = {"status": "error", "filename": None}
 
 
+#set up the url linkings for tornado to link the views to the urls and set the settings we need
+#it also tells tornado to host any static files (unused), the videos are returned to the player
+#by the VideoStreamHandler not the static file handler.
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
@@ -365,6 +388,8 @@ def make_app():
         debug=False
     )
 
+
+#run the app and listen on port 8888
 if __name__ == "__main__":
     app = make_app()
     app.listen(8888)
